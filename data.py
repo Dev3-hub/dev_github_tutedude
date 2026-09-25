@@ -2,12 +2,12 @@ data = [
     {
         "id": 1,
         "name": "Dev",
-        "course": "Python"
+        "course": "docker"
     },
     {
         "id": 2,
-        "name": "Rahul",
-        "course": "Flask"
+        "name": "parveen",
+        "course": "cloud"
     },
     {
         "id": 3,
