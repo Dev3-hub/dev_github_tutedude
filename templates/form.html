@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Form</title>
+    <title>To-Do Page</title>
 </head>
 <body>
 
-    <h1>Student Registration Form</h1>
+    <h1>To-Do Item</h1>
 
-    {% if error %}
-        <p style="color: red;">Error: {{ error }}</p>
-    {% endif %}
+    <form action="/submittodoitem" method="POST">
 
-    <form method="POST" action="/submit">
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" name="itemName" required>
 
-        <label>Name:</label>
-        <input type="text" name="name" required>
         <br><br>
 
-        <label>Course:</label>
-        <input type="text" name="course" required>
+        <label for="itemDescription">Item Description:</label>
+        <textarea id="itemDescription" name="itemDescription" required></textarea>
+
         <br><br>
 
         <button type="submit">Submit</button>
