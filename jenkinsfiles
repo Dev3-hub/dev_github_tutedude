@@ -1,0 +1,26 @@
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'GitHub repository checkout successful!'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Preparing Flask and Express applications...'
+                sh 'ls -la'
+            }
+        }
+
+        stage('Deploy Status') {
+            steps {
+                echo 'Jenkins CI/CD pipeline executed successfully!'
+            }
+        }
+    }
+}
+```
