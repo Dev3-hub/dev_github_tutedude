@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+    }
+
+    stages {
+        stage('Verify Flask Backend') {
+            steps {
+                sh '''
+                    set -e
+                    test -f backend/app.py
+                    test -f backend/requirements.txt
+                    python3 --version
+                    echo "Flask backend files verified."
+                '''
+            }
+        }
+
+        stage('Deploy Flask Backend') {
+            steps {
+                sh '''
+                    set -e
+
+                    cp backend/app.py /opt/apps/flask/app.py
+                    cp backend/requirements.txt /opt/apps/flask/requirements.txt
+
+                    if [ -f backend/data.py ]; then
+                        cp backend/data.py /opt/apps/flask/data.py
+                    fi
+
+                    /opt/apps/flask/venv/bin/pip install -r /opt/apps/flask/requirements.txt
+
+                    sudo /usr/bin/systemctl restart flask-backend
+                '''
+            }
+        }
+
+        stage('Verify Flask Deployment') {
+            steps {
+                sh '''
+                    set -e
+
+                    for i in $(seq 1 12); do
+        }
+
+    post {
+        success {
+            echo 'Flask Backend deployment failed. Check the console output.'
+        }
+    }
+}
+        failure {
+        }
+            echo 'Flask Backend CI/CD completed successfully.'
+    }
+                '''
+            }
+                    exit 1
+                        if curl -fsS http://127.0.0.1:5000/api; then
+                    echo "Flask API verification failed."
+                            echo "Flask deployment successful."
+
+                    done
+                            exit 0
+                        sleep 5

@@ -1,0 +1,77 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+    }
+
+    stages {
+        stage('Verify Express Frontend') {
+            steps {
+                sh '''
+                    set -e
+
+                    test -f frontend/server.js
+                    test -f frontend/package.json
+
+                    node --version
+                    npm --version
+
+                    echo "Express frontend files verified."
+                '''
+            }
+        }
+
+        stage('Deploy Express Frontend') {
+            steps {
+                sh '''
+                    set -e
+
+                    cp frontend/server.js /opt/apps/express/server.js
+                    mkdir -p /opt/apps/express/public
+                    cp -R frontend/public/. /opt/apps/express/public/
+                    cp frontend/package.json /opt/apps/express/package.json
+
+                    if [ -f frontend/package-lock.json ]; then
+                        cp frontend/package-lock.json /opt/apps/express/package-lock.json
+                        cd /opt/apps/express
+                        npm ci --omit=dev
+                    else
+                        cd /opt/apps/express
+                        npm install --omit=dev
+                    fi
+
+                    sudo /usr/bin/systemctl restart express-frontend
+                '''
+            }
+        }
+
+        stage('Verify Express Deployment') {
+            steps {
+                sh '''
+                    set -e
+
+                    for i in $(seq 1 12); do
+                        if curl -fsS http://127.0.0.1:3000/; then
+                            echo "Express deployment successful."
+                            exit 0
+                        fi
+
+                        sleep 5
+                    done
+
+                    echo "Express frontend verification failed."
+                    exit 1
+                '''
+        }
+    }
+
+        success {
+            echo 'Express Frontend CI/CD completed successfully.'
+        }
+
+        failure {
+            echo 'Express Frontend deployment failed. Check the console output.'
+        }
+    }
+}    post {

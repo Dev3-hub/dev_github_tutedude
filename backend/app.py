@@ -1,17 +1,17 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for
-from pymongo import MongoClient
-from dotenv import load_dotenv
-import os
-from data import data
-
-load_dotenv()
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-# MongoDB connection
-client = MongoClient(os.getenv("MONGO_URI"))
-db = client["student_database"]
-collection = db["students"]
+data = [
+    {"id": 1, "name": "Dev", "course": "Python"},
+    {"id": 2, "name": "Rahul", "course": "Flask"},
+    {"id": 3, "name": "Priya", "course": "Web Development"}
+]
+
+
+@app.route("/")
+def home():
+    return jsonify({"message": "Flask backend is running"})
 
 
 @app.route("/api")
@@ -19,31 +19,11 @@ def api():
     return jsonify(data)
 
 
-@app.route("/form")
-def form():
-    return render_template("form.html")
-
-
 @app.route("/submit", methods=["POST"])
 def submit():
-    try:
-        name = request.form["name"]
-        course = request.form["course"]
-
-        collection.insert_one({
-            "name": name,
-            "course": course
-        })
-
-        return redirect(url_for("success"))
-
-    except Exception as e:
-        return render_template("form.html", error=str(e))
-
-
-@app.route("/success")
-def success():
-    return render_template("success.html")
+    return jsonify({
+        "message": "Submission received successfully"
+    }), 200
 
 
 if __name__ == "__main__":
