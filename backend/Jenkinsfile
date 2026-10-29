@@ -58,10 +58,22 @@ pipeline {
                 '''
             }
                     exit 1
-                        if curl -fsS http://127.0.0.1:5000/api; then
-                    echo "Flask API verification failed."
-                            echo "Flask deployment successful."
+                        
+stage('Verify Flask Deployment') {
+    steps {
+        sh '''
+            for i in $(seq 1 12); do
+                if curl -fsS http://127.0.0.1:5000/api; then
+                    echo "Flask backend is responding successfully"
+                    exit 0
+                fi
+                echo "Waiting for Flask backend... attempt $i"
+                sleep 5
+            done
 
-                    done
-                            exit 0
-                        sleep 5
+            echo "Flask backend verification failed"
+            exit 1
+        '''
+    }
+}
+
