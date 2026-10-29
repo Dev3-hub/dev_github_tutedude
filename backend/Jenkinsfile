@@ -43,37 +43,28 @@ pipeline {
                     set -e
 
                     for i in $(seq 1 12); do
+                        if curl -fsS http://127.0.0.1:5000/api; then
+                            echo "Flask backend is responding successfully."
+                            exit 0
+                        fi
+
+                        echo "Waiting for Flask backend... attempt $i"
+                        sleep 5
+                    done
+
+                    echo "Flask backend verification failed."
+                    exit 1
+                '''
+            }
         }
+    }
 
     post {
         success {
+            echo 'Flask Backend CI/CD completed successfully.'
+        }
+        failure {
             echo 'Flask Backend deployment failed. Check the console output.'
         }
     }
 }
-        failure {
-        }
-            echo 'Flask Backend CI/CD completed successfully.'
-    }
-                '''
-            }
-                    exit 1
-                        
-stage('Verify Flask Deployment') {
-    steps {
-        sh '''
-            for i in $(seq 1 12); do
-                if curl -fsS http://127.0.0.1:5000/api; then
-                    echo "Flask backend is responding successfully"
-                    exit 0
-                fi
-                echo "Waiting for Flask backend... attempt $i"
-                sleep 5
-            done
-
-            echo "Flask backend verification failed"
-            exit 1
-        '''
-    }
-}
-
