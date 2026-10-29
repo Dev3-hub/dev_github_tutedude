@@ -13,6 +13,7 @@ pipeline {
 
                     test -f frontend/server.js
                     test -f frontend/package.json
+                    test -f frontend/public/form.html
 
                     node --version
                     npm --version
@@ -57,21 +58,23 @@ pipeline {
                             exit 0
                         fi
 
+                        echo "Waiting for Express frontend... attempt $i"
                         sleep 5
                     done
 
                     echo "Express frontend verification failed."
                     exit 1
                 '''
+            }
         }
     }
 
+    post {
         success {
             echo 'Express Frontend CI/CD completed successfully.'
         }
-
         failure {
             echo 'Express Frontend deployment failed. Check the console output.'
         }
     }
-}    post {
+}
